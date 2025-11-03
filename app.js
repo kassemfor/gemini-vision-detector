@@ -1,10 +1,10 @@
 // Gemini Pro Vision API Configuration
 let GEMINI_API_KEY = localStorage.getItem('gemini_api_key') || '';
-let selectedModel = 'gemini-2.0-flash-exp'; // Default to Flash model
+let selectedModel = 'gemini-2.5-flash-exp'; // Default to Flash model
 
 const MODELS = {
-    flash: 'gemini-2.0-flash-exp',
-    pro: 'gemini-1.5-pro'
+    flash: 'gemini-2.2-flash-exp',
+    pro: 'gemini-2.5-pro'
 };
 
 function getApiUrl() {
