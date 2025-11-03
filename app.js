@@ -20,10 +20,10 @@ let GEMINI_API_KEY = typeof process !== 'undefined' && process.env && process.en
     ? process.env.GEMINI_API_KEY 
     : (localStorage.getItem('gemini_api_key') || '');
 
-let selectedModel = 'gemini-2.5-flash-exp'; // Default to Flash model
+let selectedModel = 'gemini-2.5-flash-preview-09-2025'; // Default to Flash model
 
 const MODELS = {
-    flash: 'gemini-2.2-flash-exp',
+    flash: 'gemini-2.5-flash-preview-09-2025',
     pro: 'gemini-2.5-pro'
 };
 
