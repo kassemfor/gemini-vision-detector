@@ -1,6 +1,15 @@
 // Gemini Pro Vision API Configuration
 const GEMINI_API_KEY = 'AIzaSyA6r_qzEsej_J3T52x5ajV8yGSHCaIn5HY';
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${GEMINI_API_KEY}`;
+let selectedModel = 'gemini-1.5-flash'; // Default to Flash model
+
+const MODELS = {
+    flash: 'gemini-1.5-flash',
+    pro: 'gemini-1.5-pro'
+};
+
+function getApiUrl() {
+    return `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
+}
 
 // DOM Elements
 const cameraBtn = document.getElementById('cameraBtn');
@@ -16,6 +25,7 @@ const detectionsList = document.getElementById('detectionsList');
 const installPrompt = document.getElementById('installPrompt');
 const installBtn = document.getElementById('installBtn');
 const dismissBtn = document.getElementById('dismissBtn');
+const modelSelector = document.getElementById('modelSelector');
 
 let deferredPrompt;
 let currentImage = null;
@@ -26,6 +36,10 @@ galleryBtn.addEventListener('click', () => galleryInput.click());
 cameraInput.addEventListener('change', handleImageSelect);
 galleryInput.addEventListener('change', handleImageSelect);
 dismissBtn.addEventListener('click', () => installPrompt.classList.add('hidden'));
+modelSelector.addEventListener('change', (e) => {
+    selectedModel = MODELS[e.target.value];
+    console.log('Model changed to:', selectedModel);
+});
 
 // Install PWA
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -120,7 +134,7 @@ async function detectObjects(imageData) {
             }]
         };
 
-        const response = await fetch(GEMINI_API_URL, {
+        const response = await fetch(getApiUrl(), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
