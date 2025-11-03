@@ -1,14 +1,26 @@
 // Gemini Pro Vision API Configuration
-const GEMINI_API_KEY = 'AIzaSyA6r_qzEsej_J3T52x5ajV8yGSHCaIn5HY';
-let selectedModel = 'gemini-1.5-flash'; // Default to Flash model
+let GEMINI_API_KEY = localStorage.getItem('gemini_api_key') || '';
+let selectedModel = 'gemini-2.0-flash-exp'; // Default to Flash model
 
 const MODELS = {
-    flash: 'gemini-1.5-flash',
+    flash: 'gemini-2.0-flash-exp',
     pro: 'gemini-1.5-pro'
 };
 
 function getApiUrl() {
     return `https://generativelanguage.googleapis.com/v1/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
+}
+
+function checkApiKey() {
+    if (!GEMINI_API_KEY) {
+        const key = prompt('Please enter your Gemini API key:\n\n(It will be stored locally and never uploaded to GitHub)');
+        if (key) {
+            GEMINI_API_KEY = key;
+            localStorage.setItem('gemini_api_key', key);
+        } else {
+            alert('API key is required to use this app');
+        }
+    }
 }
 
 // DOM Elements
@@ -269,6 +281,7 @@ function updateStatus(status) {
 
 // Initialize
 window.addEventListener('load', () => {
+    checkApiKey();
     updateStatus('Ready');
     console.log('Gemini Vision Detector initialized');
 });
