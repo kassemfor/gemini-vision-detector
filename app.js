@@ -1,14 +1,14 @@
 // Gemini Pro Vision API Configuration
 const GEMINI_API_KEY = 'AIzaSyA6r_qzEsej_J3T52x5ajV8yGSHCaIn5HY';
-let selectedModel = 'gemini-1.5-flash-latest'; // Default to Flash model
+let selectedModel = 'gemini-1.5-flash'; // Default to Flash model
 
 const MODELS = {
-    flash: 'gemini-1.5-flash-latest',
-    pro: 'gemini-1.5-pro-latest'
+    flash: 'gemini-1.5-flash',
+    pro: 'gemini-1.5-pro'
 };
 
 function getApiUrl() {
-    return `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
+    return `https://generativelanguage.googleapis.com/v1/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
 }
 
 // DOM Elements
