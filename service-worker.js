@@ -1,59 +1,56 @@
 // Service Worker for offline support
 const CACHE_NAME = 'gemini-vision-v1';
+
 const urlsToCache = [
-  './',
-  './index.html',
-  './style.css',
-  './app.js',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
-  './icon.svg'
+  '/',
+  '/index.html',
+  '/style.css',
+  '/app.js',
+  '/manifest.json',
+  '/icon.svg'
 ];
 
-// Install event - cache resources
+// Install service worker and cache static files
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Opened cache');
         return cache.addAll(urlsToCache);
       })
-      .catch(err => {
-        console.error('Cache installation failed:', err);
-      })
   );
-  self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate service worker and remove old caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
     })
   );
-  self.clients.claim();
 });
 
-// Fetch event - serve from cache when offline, but always try network for API calls
+// Fetch event handler
 self.addEventListener('fetch', event => {
   // Skip non-GET requests
   if (event.request.method !== 'GET') {
     return;
   }
 
-  // Always use network for Gemini API calls
-  if (event.request.url.includes('generativelanguage.googleapis.com')) {
-    event.respondWith(fetch(event.request));
-    return;
+  // Always use network for Gemini API calls - FIXED: Use safe URL host validation
+  try {
+    const requestUrl = new URL(event.request.url);
+    if (requestUrl.host === 'generativelanguage.googleapis.com') {
+      event.respondWith(fetch(event.request));
+      return;
+    }
+  } catch (e) {
+    // Invalid URL, skip this check
   }
 
   event.respondWith(
@@ -63,22 +60,18 @@ self.addEventListener('fetch', event => {
         if (response) {
           return response;
         }
-
         return fetch(event.request).then(response => {
           // Don't cache non-successful responses
           if (!response || response.status !== 200 || response.type !== 'basic') {
             return response;
           }
-
           // Clone the response
           const responseToCache = response.clone();
-
           // Add to cache
           caches.open(CACHE_NAME)
             .then(cache => {
               cache.put(event.request, responseToCache);
             });
-
           return response;
         });
       })
